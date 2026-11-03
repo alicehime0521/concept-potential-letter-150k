@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>コンセプトポテンシャル3DAYSオンライン合宿のご案内</title>
+<!--
+  コンセプトポテンシャル レター 15万円版（期限後に見せる用）
+  作成：2026-11-03（Claude／加藤朋香）
+  中身は今のレター v11（concept-potential-letter-v11.vercel.app）をそのまま読み込み、次の6か所だけ書き換えて表示する。
+  1〜5：特別価格（2万9800円）の文を、通常価格15万円の文に置き換える
+  6：申込ボタンの飛び先を、UTAGEの15万円の決済ページにする（枠の外＝ページ全体で開く）
+  v11の文が変わって書き換えができなかったときは、2万9800円を見せないように、下の「予備の表示」を出す。
+-->
+<style>
+  body{margin:0;font-family:"Hiragino Sans","Noto Sans JP",sans-serif;background:#fff;color:#222}
+  .fallback{max-width:640px;margin:40px auto;padding:0 20px;line-height:1.9;text-align:center}
+  .fallback a{display:inline-block;margin-top:20px;padding:16px 28px;background:#c0392b;color:#fff;border-radius:8px;text-decoration:none;font-weight:700}
+  .loading{padding:40px;text-align:center;color:#888}
+</style>
+</head>
+<body>
+<div class="loading" id="loading">読み込み中です…</div>
+<script>
+(function () {
+  var SRC = 'https://concept-potential-letter-v11.vercel.app/';
+  var PAY = 'https://utage-system.com/p/ihktW9vcsAHR';
+  var REPS = [
+    ['<b>そういうわけで、今回は特別価格として、2万9800円（税別）でお渡しします。</b>', '<b>そういうわけで、通常価格の15万円（税別）でお渡しします。</b>'],
+    ['非売品が3つ乗って、2万9800円（税別）です。', '非売品が3つ乗って、15万円（税別）です。'],
+    ['1000万円の、だいたい300分の1です。', '1000万円の、だいたい70分の1です。'],
+    ['<p>300分の1で、僕が回り道した部分', '<p>70分の1で、僕が回り道した部分'],
+    ['<p>この価格は3日間だけです。</p>', '<p>2万9800円の特別価格は、ご案内から3日間で終了しました。</p>'],
+    ['<p>3日を過ぎたら、通常価格の15万円に戻ります。</p>', '<p>現在は通常価格の15万円でのご案内です。</p>']
+  ];
+
+  function fallback() {
+    document.getElementById('loading').outerHTML =
+      '<div class="fallback"><p>特別価格（2万9800円）でのご案内期間は終了しました。</p>' +
+      '<p>現在は、コンセプトポテンシャル3DAYSオンライン合宿を<br>通常価格の15万円（税別）でご案内しています。</p>' +
+      '<a href="' + PAY + '" target="_top">お申し込みはこちら</a></div>';
+  }
+
+  fetch(SRC, { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (t) {
+    var ok = true;
+    REPS.forEach(function (p) {
+      if (t.split(p[0]).length - 1 !== 1) { ok = false; return; }
+      t = t.split(p[0]).join(p[1]);
+    });
+    var btn = /<a class="buy-btn" href="[^"]*"/g;
+    if ((t.match(btn) || []).length < 1) { ok = false; }
+    t = t.replace(btn, '<a class="buy-btn" target="_top" href="' + PAY + '"');
+    if (t.indexOf('2万9800円（税別）でお渡し') >= 0) { ok = false; }
+    if (!ok) { fallback(); return; }
+    t = t.replace('<head>', '<head>\n<base href="' + SRC + '">');
+    document.open();
+    document.write(t);
+    document.close();
+  }).catch(fallback);
+})();
+</script>
+</body>
+</html>
